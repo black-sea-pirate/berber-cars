@@ -36,6 +36,9 @@ const i18n = {
     heroSubtitle: "Geometria 3D \u2022 Diagnostyka \u2022 Elektronika",
     ctaBook: "Umów wizytę",
     ctaCall: "Zadzwoń",
+    teamTitle: "Zobacz kto będzie Cię obsługiwał.",
+    roleServiceAdvisor: "Doradca serwisowy",
+    roleOwner: "Właściciel",
     services: "Usługi",
     contact: "Kontakt",
     hours: "Godziny",
@@ -61,6 +64,9 @@ const i18n = {
     heroSubtitle: "3D геометрія \u2022 Діагностика \u2022 Електроніка",
     ctaBook: "Записатися",
     ctaCall: "Подзвонити",
+    teamTitle: "Познайомся з тими, хто буде тебе обслуговувати.",
+    roleServiceAdvisor: "Сервісний радник",
+    roleOwner: "Власник",
     services: "Послуги",
     contact: "Контакти",
     hours: "Години роботи",
@@ -86,6 +92,9 @@ const i18n = {
     heroSubtitle: "3D геометрия \u2022 Диагностика \u2022 Электроника",
     ctaBook: "Записаться",
     ctaCall: "Позвонить",
+    teamTitle: "Познакомьтесь с теми, кто будет вас обслуживать.",
+    roleServiceAdvisor: "Сервисный консультант",
+    roleOwner: "Владелец",
     services: "Услуги",
     contact: "Контакты",
     hours: "Часы работы",
@@ -111,6 +120,9 @@ const i18n = {
     heroSubtitle: "3D Alignment \u2022 Diagnostics \u2022 Electronics",
     ctaBook: "Book now",
     ctaCall: "Call",
+    teamTitle: "Meet the team who will serve you.",
+    roleServiceAdvisor: "Service Advisor",
+    roleOwner: "Owner",
     services: "Services",
     contact: "Contact",
     hours: "Opening hours",
@@ -212,9 +224,188 @@ function IconMail(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+// Services Carousel Component with infinite auto-rotation
+function ServicesCarousel({ services }: { services: string[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const SERVICE_ICONS = [
+    { key: "alignment", icon: "⚙️" },
+    { key: "diagnostics", icon: "🔍" },
+    { key: "electronics", icon: "⚡" },
+    { key: "chiptuning", icon: "🚀" },
+    { key: "ac", icon: "❄️" },
+    { key: "tyres", icon: "🛞" },
+  ];
+
+  // Auto-rotate every 1.5 seconds when not hovered
+  useEffect(() => {
+    if (!isHovered) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % services.length);
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [isHovered, services.length]);
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % services.length);
+  };
+
+  const goToPrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + services.length) % services.length);
+  };
+
+  // Calculate visible items (show 3 items at a time)
+  const getVisibleItems = () => {
+    const items = [];
+    for (let i = -1; i <= 1; i++) {
+      const index = (currentIndex + i + services.length) % services.length;
+      items.push({
+        service: services[index],
+        icon: SERVICE_ICONS[index],
+        index,
+      });
+    }
+    return items;
+  };
+
+  return (
+    <div
+      className="relative mt-8"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Previous Button */}
+      <button
+        onClick={goToPrev}
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 -ml-4 sm:-ml-6 group"
+        aria-label="Previous service"
+      >
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/20 group-hover:border-rose-500 bg-black/40 backdrop-blur flex items-center justify-center transition-all duration-300">
+          <svg
+            className="w-5 h-5 sm:w-6 sm:h-6 text-white/60 group-hover:text-rose-500 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </div>
+      </button>
+
+      {/* Carousel Items */}
+      <div className="overflow-hidden px-4">
+        <div className="flex items-center justify-center gap-4 sm:gap-6">
+          {getVisibleItems().map((item, idx) => {
+            const isCenter = idx === 1;
+            return (
+              <div
+                key={`${item.index}-${idx}`}
+                className={`flex-shrink-0 transition-all duration-500 ${
+                  isCenter
+                    ? "w-48 sm:w-56 opacity-100 scale-100"
+                    : "w-36 sm:w-44 opacity-50 scale-90"
+                }`}
+              >
+                <div
+                  className={`rounded-xl border p-6 text-center shadow-sm transition-all duration-300 ${
+                    isCenter
+                      ? "border-white/10 bg-white/10 hover:bg-white/15"
+                      : "border-white/5 bg-white/5"
+                  }`}
+                >
+                  <div className="text-4xl sm:text-5xl mb-3">
+                    {item.icon.icon}
+                  </div>
+                  <div
+                    className={`text-sm sm:text-base transition-colors select-none ${
+                      isCenter ? "text-white font-medium" : "text-neutral-300"
+                    }`}
+                  >
+                    {item.service}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Next Button */}
+      <button
+        onClick={goToNext}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 -mr-4 sm:-mr-6 group"
+        aria-label="Next service"
+      >
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/20 group-hover:border-rose-500 bg-black/40 backdrop-blur flex items-center justify-center transition-all duration-300">
+          <svg
+            className="w-5 h-5 sm:w-6 sm:h-6 text-white/60 group-hover:text-rose-500 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </div>
+      </button>
+
+      {/* Progress Indicators */}
+      <div className="flex items-center justify-center gap-2 mt-6">
+        {services.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`transition-all duration-300 rounded-full ${
+              idx === currentIndex
+                ? "w-8 h-2 bg-rose-500"
+                : "w-2 h-2 bg-white/20 hover:bg-white/40"
+            }`}
+            aria-label={`Go to service ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function BerberCarsLanding() {
   const [lang, setLang] = useState<LangKey>("pl");
   const t = useMemo(() => i18n[lang], [lang]);
+
+  // Dynamic font class for headings: Oswald for RU/UA (Cyrillic), Bebas Neue for PL/EN
+  const headingFont = useMemo(() => {
+    return lang === "ru" || lang === "ua"
+      ? "[font-family:'Oswald',ui-sans-serif]"
+      : "[font-family:'Bebas_Neue','Anton',ui-sans-serif]";
+  }, [lang]);
+
+  // Persist language and keep <html lang> in sync for a11y
+  useEffect(() => {
+    try {
+      const stored =
+        (localStorage.getItem("bc.lang") as LangKey | null) || null;
+      if (stored && i18n[stored]) setLang(stored);
+    } catch {}
+  }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem("bc.lang", lang);
+    } catch {}
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("lang", lang);
+    }
+  }, [lang]);
   // ---- services meta ----
   type ServiceMeta =
     | { key: "alignment"; img: string }
@@ -233,10 +424,49 @@ export default function BerberCarsLanding() {
     { key: "tyres", img: "/services/tyres.png" },
   ];
 
+  // bios per language for 3 people
+  const TEAM_BIOS: Record<
+    LangKey,
+    { manager: string; owner1: string; owner2: string }
+  > = {
+    pl: {
+      manager:
+        "Doradca serwisowy z doświadczeniem. Łączy wiedzę techniczną z dobrą obsługą klienta i dba o sprawną realizację usług.",
+      owner1:
+        "Właściciel warsztatu. Odpowiada za kierunek rozwoju, standard jakości i nowoczesne rozwiązania w serwisie.",
+      owner2:
+        "Właściciel. Specjalizuje się w doborze części i tuningu, dba o terminowość i transparentną komunikację.",
+    },
+    ua: {
+      manager:
+        "Досвідчений сервісний радник. Поєднує технічні знання з якісним сервісом та контролює виконання робіт.",
+      owner1:
+        "Власник сервісу. Відповідає за розвиток, якість та впровадження сучасних рішень.",
+      owner2:
+        "Власник. Спеціалізується на підборі запчастин і тюнингу, стежить за строками та комунікацією.",
+    },
+    ru: {
+      manager:
+        "Опытный сервисный консультант. Совмещает технические знания с качественным сервисом и контролирует выполнение работ.",
+      owner1:
+        "Владелец сервиса. Отвечает за развитие, качество и современные решения мастерской.",
+      owner2:
+        "Владелец. Специализируется на подборе запчастей и тюнинге, следит за сроками и коммуникацией.",
+    },
+    en: {
+      manager:
+        "Experienced service advisor who blends technical knowledge with great customer care and smooth execution.",
+      owner1:
+        "Shop owner. Responsible for strategy, quality standards and modern solutions in the workshop.",
+      owner2:
+        "Owner. Focused on parts sourcing and tuning, keeping timelines and communication clear.",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 selection:bg-white/10">
       {/* Global max width */}
-      <Header lang={lang} setLang={setLang} />
+      <Header lang={lang} setLang={setLang} headingFont={headingFont} />
       {/* HERO */}
       <section className="relative overflow-hidden">
         {/* фон под видео */}
@@ -308,36 +538,23 @@ export default function BerberCarsLanding() {
       {/* SERVICES */}
       <section id="services" className="mx-auto max-w-7xl px-4 py-16 sm:py-20">
         <div className="flex items-end justify-between">
-          <h2 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] [font-family:'Bebas_Neue','Anton',ui-sans-serif]">
+          <h2
+            className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
+          >
             {t.services}
           </h2>
           <div className="text-neutral-400 text-sm">BERBER CARS</div>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-          {SERVICE_META.map((meta: ServiceMeta, idx: number) => (
-            <div
-              key={meta.key}
-              className="group rounded-xl border border-white/5 bg-white/5 p-4 text-center shadow-sm hover:bg-white/10 transition"
-            >
-              <img
-                src={meta.img}
-                alt=""
-                className="mx-auto mb-3 h-8 w-8 object-contain opacity-90"
-                draggable={false}
-              />
-              <div className="text-sm sm:text-base text-neutral-200 group-hover:text-white transition select-none">
-                {t.quickServices[idx]}
-              </div>
-            </div>
-          ))}
-        </div>
+        <ServicesCarousel services={t.quickServices} />
       </section>
       {/* CONTACT + HOURS */}
       <section id="contact" className="mx-auto max-w-7xl px-4 pb-8">
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="rounded-2xl border border-white/5 bg-white/5 p-6">
-            <h3 className="text-2xl font-extrabold uppercase tracking-tight [font-family:'Bebas_Neue','Anton',ui-sans-serif]">
+            <h3
+              className={`text-2xl font-extrabold uppercase tracking-tight ${headingFont}`}
+            >
               {t.contact}
             </h3>
             <div className="mt-4 space-y-3 text-sm">
@@ -378,7 +595,9 @@ export default function BerberCarsLanding() {
             </div>
 
             <div className="mt-6">
-              <h4 className="text-xl font-bold uppercase tracking-tight [font-family:'Bebas_Neue','Anton',ui-sans-serif]">
+              <h4
+                className={`text-xl font-bold uppercase tracking-tight ${headingFont}`}
+              >
                 {t.hours}
               </h4>
               <ul className="mt-2 space-y-1 text-sm text-neutral-300">
@@ -420,11 +639,70 @@ export default function BerberCarsLanding() {
           </div>
         </div>
       </section>
+      {/* TEAM */}
+      <section id="team" className="mx-auto max-w-7xl px-4 py-16 sm:py-20">
+        <h2
+          className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
+        >
+          {t.teamTitle}
+        </h2>
+
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            {
+              key: "manager",
+              role: t.roleServiceAdvisor,
+              name: "Imię i Nazwisko",
+              img: "/team/manager.svg",
+            },
+            {
+              key: "owner1",
+              role: t.roleOwner,
+              name: "Imię i Nazwisko",
+              img: "/team/owner1.svg",
+            },
+            {
+              key: "owner2",
+              role: t.roleOwner,
+              name: "Imię i Nazwisko",
+              img: "/team/owner2.svg",
+            },
+          ].map((m) => (
+            <article
+              key={m.key}
+              className="rounded-2xl border border-white/5 bg-white/5 overflow-hidden"
+            >
+              <div className="bg-white/90">
+                <img
+                  src={m.img}
+                  alt={`${m.name} — ${m.role}`}
+                  className="w-full h-[360px] object-cover object-center select-none"
+                  loading="lazy"
+                  draggable={false}
+                />
+              </div>
+              <div className="p-6">
+                <div className="text-xs uppercase tracking-wider text-neutral-400 font-semibold">
+                  {m.role}
+                </div>
+                <h3 className="mt-1 text-xl font-bold text-neutral-50">
+                  {m.name}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-neutral-300">
+                  {TEAM_BIOS[lang][m.key as "manager" | "owner1" | "owner2"]}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
       {/* FOOTER */}
       <footer className="mt-12 border-t border-white/5 bg-black/20">
         <div className="mx-auto max-w-7xl px-4 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="text-sm text-neutral-400">
-            <div className="font-bold text-neutral-200 tracking-wide uppercase [font-family:'Bebas_Neue','Anton',ui-sans-serif]">
+            <div
+              className={`font-bold text-neutral-200 tracking-wide uppercase ${headingFont}`}
+            >
               BERBER CARS
             </div>
             <div className="mt-1">
@@ -482,10 +760,13 @@ export default function BerberCarsLanding() {
 function Header({
   lang,
   setLang,
+  headingFont,
 }: {
   lang: LangKey;
   setLang: (l: LangKey) => void;
+  headingFont: string;
 }) {
+  const t = i18n[lang];
   return (
     <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-black/40 bg-black/60 border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
@@ -503,7 +784,7 @@ function Header({
             rel="noreferrer"
             className="hidden sm:inline-flex rounded-xl bg-rose-600 hover:bg-rose-500 active:bg-rose-700 px-4 py-2 text-sm font-semibold uppercase tracking-wide"
           >
-            Umów wizytę
+            {t.ctaBook}
           </a>
           <a
             className="hidden sm:inline-flex items-center gap-2 text-sm text-neutral-200 hover:text-white"

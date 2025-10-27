@@ -22,6 +22,21 @@ export const metadata: Metadata = {
     description:
       "Geometria 3D, diagnostyka, elektronika. Roździeńska 41, Katowice.",
     type: "website",
+    images: [
+      {
+        url: "/brand/hero-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "BERBER CARS — logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BERBER CARS — Auto Serwis",
+    description:
+      "Geometria 3D, diagnostyka, elektronika. Roździeńska 41, Katowice.",
+    images: ["/brand/hero-logo.png"],
   },
   icons: { icon: "/favicon.ico" },
 };
@@ -41,7 +56,7 @@ export default function RootLayout({
           crossOrigin=""
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;700&family=Oswald:wght@600;700&display=swap"
           rel="stylesheet"
         />
         <meta name="theme-color" content="#0b0b0d" />
