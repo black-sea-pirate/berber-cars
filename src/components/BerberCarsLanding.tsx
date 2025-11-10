@@ -24,10 +24,10 @@ const ADDRESS_TEXT = "Roździeńska 41, 40-382 Katowice";
 const TELEGRAM_HANDLE = "berbercars";
 const INSTAGRAM_URL = "https://www.instagram.com/berbercarserwis/";
 
-const GMAPS_Q = encodeURIComponent(ADDRESS_TEXT);
-const GMAPS_EMBED = `https://www.google.com/maps?q=${GMAPS_Q}&output=embed`;
-const GMAPS_DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${GMAPS_Q}`;
-const APPLE_MAPS_DIRECTIONS = `https://maps.apple.com/?daddr=${GMAPS_Q}`;
+const GMAPS_COORDS = "50.260655285313305,19.07732689031581";
+const GMAPS_EMBED = `https://www.google.com/maps?q=${GMAPS_COORDS}&output=embed`;
+const GMAPS_DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${GMAPS_COORDS}`;
+const APPLE_MAPS_DIRECTIONS = `https://maps.apple.com/?daddr=${GMAPS_COORDS}`;
 
 const i18n = {
   pl: {
@@ -229,13 +229,13 @@ function ServicesCarousel({ services }: { services: string[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  const SERVICE_ICONS = [
-    { key: "alignment", icon: "⚙️" },
-    { key: "diagnostics", icon: "🔍" },
-    { key: "electronics", icon: "⚡" },
-    { key: "chiptuning", icon: "🚀" },
-    { key: "ac", icon: "❄️" },
-    { key: "tyres", icon: "🛞" },
+  const SERVICE_IMAGES = [
+    { key: "alignment", img: "/services/Geometria 3D.png" },
+    { key: "diagnostics", img: "/services/Diagnostyka.png" },
+    { key: "electronics", img: "/services/Elektronika.png" },
+    { key: "chiptuning", img: "/services/Chip-tuning.png" },
+    { key: "ac", img: "/services/Klimatyzacja.png" },
+    { key: "tyres", img: "/services/Wulkanizacja.png" },
   ];
 
   // Auto-rotate every 1.5 seconds when not hovered
@@ -263,7 +263,7 @@ function ServicesCarousel({ services }: { services: string[] }) {
       const index = (currentIndex + i + services.length) % services.length;
       items.push({
         service: services[index],
-        icon: SERVICE_ICONS[index],
+        image: SERVICE_IMAGES[index],
         index,
       });
     }
@@ -301,7 +301,7 @@ function ServicesCarousel({ services }: { services: string[] }) {
 
       {/* Carousel Items */}
       <div className="overflow-hidden px-4">
-        <div className="flex items-center justify-center gap-4 sm:gap-6">
+        <div className="flex items-center justify-center gap-4 sm:gap-8">
           {getVisibleItems().map((item, idx) => {
             const isCenter = idx === 1;
             return (
@@ -309,23 +309,31 @@ function ServicesCarousel({ services }: { services: string[] }) {
                 key={`${item.index}-${idx}`}
                 className={`flex-shrink-0 transition-all duration-500 ${
                   isCenter
-                    ? "w-48 sm:w-56 opacity-100 scale-100"
-                    : "w-36 sm:w-44 opacity-50 scale-90"
+                    ? "w-72 sm:w-96 opacity-100 scale-100"
+                    : "w-56 sm:w-72 opacity-50 scale-90"
                 }`}
               >
-                <div
-                  className={`rounded-xl border p-6 text-center shadow-sm transition-all duration-300 ${
-                    isCenter
-                      ? "border-white/10 bg-white/10 hover:bg-white/15"
-                      : "border-white/5 bg-white/5"
-                  }`}
-                >
-                  <div className="text-4xl sm:text-5xl mb-3">
-                    {item.icon.icon}
-                  </div>
+                <div className="space-y-4">
+                  {/* Image card - full size */}
                   <div
-                    className={`text-sm sm:text-base transition-colors select-none ${
-                      isCenter ? "text-white font-medium" : "text-neutral-300"
+                    className={`rounded-2xl border overflow-hidden shadow-lg transition-all duration-300 aspect-square ${
+                      isCenter
+                        ? "border-white/10 bg-white/10 hover:bg-white/15"
+                        : "border-white/5 bg-white/5"
+                    }`}
+                  >
+                    <img
+                      src={item.image.img}
+                      alt={item.service}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      draggable={false}
+                    />
+                  </div>
+                  {/* Service name below card */}
+                  <div
+                    className={`text-center text-base sm:text-lg transition-colors select-none ${
+                      isCenter ? "text-white font-semibold" : "text-neutral-400"
                     }`}
                   >
                     {item.service}
@@ -431,35 +439,35 @@ export default function BerberCarsLanding() {
   > = {
     pl: {
       manager:
-        "Doradca serwisowy z doświadczeniem. Łączy wiedzę techniczną z dobrą obsługą klienta i dba o sprawną realizację usług.",
+        "Ekspert w obsłudze klienta i organizacji pracy serwisu. Doskonale zna się na technice samochodowej i dba o to, aby każde zlecenie było wykonane terminowo i zgodnie z najwyższymi standardami jakości.",
       owner1:
-        "Właściciel warsztatu. Odpowiada za kierunek rozwoju, standard jakości i nowoczesne rozwiązania w serwisie.",
+        "Właściciel odpowiedzialny za stronę prawną i administracyjną firmy. Zapewnia pełną legalność i przejrzystość wszystkich procesów biznesowych, dbając o zgodność z przepisami i bezpieczeństwo dokumentacji.",
       owner2:
-        "Właściciel. Specjalizuje się w doborze części i tuningu, dba o terminowość i transparentną komunikację.",
+        "Właściciel odpowiedzialny za rozwój techniczny serwisu. Zajmuje się doborem i zakupem profesjonalnego sprzętu oraz negocjacją warunków najmu. Decyduje o inwestycjach w nowoczesne technologie dla warsztatów.",
     },
     ua: {
       manager:
-        "Досвідчений сервісний радник. Поєднує технічні знання з якісним сервісом та контролює виконання робіт.",
+        "Експерт у роботі з клієнтами та організації роботи сервісу. Чудово розуміється на автотехніці й дбає про те, щоб кожне замовлення виконувалось вчасно та відповідно до найвищих стандартів якості.",
       owner1:
-        "Власник сервісу. Відповідає за розвиток, якість та впровадження сучасних рішень.",
+        "Власник, відповідальний за юридичну та адміністративну сторону компанії. Забезпечує повну легальність і прозорість усіх бізнес-процесів, дбаючи про відповідність законодавству та безпеку документації.",
       owner2:
-        "Власник. Спеціалізується на підборі запчастин і тюнингу, стежить за строками та комунікацією.",
+        "Власник, відповідальний за технічний розвиток сервісу. Займається підбором і закупівлею професійного обладнання та переговорами щодо умов оренди. Приймає рішення про інвестиції в сучасні технології для майстерень.",
     },
     ru: {
       manager:
-        "Опытный сервисный консультант. Совмещает технические знания с качественным сервисом и контролирует выполнение работ.",
+        "Эксперт в работе с клиентами и организации работы сервиса. Отлично разбирается в автотехнике и следит за тем, чтобы каждый заказ выполнялся вовремя и в соответствии с высочайшими стандартами качества.",
       owner1:
-        "Владелец сервиса. Отвечает за развитие, качество и современные решения мастерской.",
+        "Владелец, ответственный за юридическую и административную сторону компании. Обеспечивает полную легальность и прозрачность всех бизнес-процессов, заботясь о соблюдении законодательства и безопасности документации.",
       owner2:
-        "Владелец. Специализируется на подборе запчастей и тюнинге, следит за сроками и коммуникацией.",
+        "Владелец, ответственный за техническое развитие сервиса. Занимается подбором и закупкой профессионального оборудования, а также переговорами об условиях аренды. Принимает решения об инвестициях в современные технологии для мастерских.",
     },
     en: {
       manager:
-        "Experienced service advisor who blends technical knowledge with great customer care and smooth execution.",
+        "Expert in customer service and workshop operations management. Has deep knowledge of automotive technology and ensures every job is completed on time and to the highest quality standards.",
       owner1:
-        "Shop owner. Responsible for strategy, quality standards and modern solutions in the workshop.",
+        "Owner responsible for legal and administrative aspects of the business. Ensures full compliance and transparency of all business processes, maintaining proper documentation and legal safety.",
       owner2:
-        "Owner. Focused on parts sourcing and tuning, keeping timelines and communication clear.",
+        "Owner responsible for technical development of the service center. Handles selection and procurement of professional equipment and lease negotiations. Makes decisions on investments in modern workshop technologies.",
     },
   };
 
@@ -652,31 +660,31 @@ export default function BerberCarsLanding() {
             {
               key: "manager",
               role: t.roleServiceAdvisor,
-              name: "Imię i Nazwisko",
-              img: "/team/manager.svg",
+              name: "Menadżer Serwisu",
+              img: "/team/manager.jpg",
             },
             {
               key: "owner1",
               role: t.roleOwner,
-              name: "Imię i Nazwisko",
-              img: "/team/owner1.svg",
+              name: "Współwłaściciel",
+              img: "/team/owner_1.jpg",
             },
             {
               key: "owner2",
               role: t.roleOwner,
-              name: "Imię i Nazwisko",
-              img: "/team/owner2.svg",
+              name: "Współwłaściciel",
+              img: "/team/owner_2.jpg",
             },
           ].map((m) => (
             <article
               key={m.key}
               className="rounded-2xl border border-white/5 bg-white/5 overflow-hidden"
             >
-              <div className="bg-white/90">
+              <div className="bg-neutral-800/50">
                 <img
                   src={m.img}
                   alt={`${m.name} — ${m.role}`}
-                  className="w-full h-[360px] object-cover object-center select-none"
+                  className="w-full h-[480px] object-cover object-center select-none"
                   loading="lazy"
                   draggable={false}
                 />
