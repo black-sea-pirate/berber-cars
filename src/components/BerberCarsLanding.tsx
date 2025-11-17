@@ -476,25 +476,118 @@ export default function BerberCarsLanding() {
       {/* Global max width */}
       <Header lang={lang} setLang={setLang} headingFont={headingFont} />
       {/* HERO */}
-      <section className="relative overflow-hidden">
-        {/* фон под видео */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(40,40,45,0.6),rgba(10,10,12,0.9))]" />
-        {/* видео-дым / fallback */}
-        <SmokeLayer />
-        {/* лёгкий затемняющий градиент для глубины */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
+      <section className="relative overflow-visible">
+        {/* Mobile version: single centered logo (old design) */}
+        <div className="block lg:hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(40,40,45,0.6),rgba(10,10,12,0.9))]" />
+          <SmokeLayer />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
+          <div className="relative mx-auto max-w-7xl min-h-[70vh] px-4 py-20 sm:py-28">
+            <img
+              src="/brand/hero-logo.png"
+              alt="BERBER CARS — logo"
+              className="pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] sm:w-[50vw] max-w-[820px] min-w-[260px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.08)]"
+              draggable={false}
+            />
+          </div>
+        </div>
 
-        {/* только логотип по центру */}
-        <div className="relative mx-auto max-w-7xl min-h-[70vh] px-4 py-20 sm:py-28">
-          <img
-            src="/brand/hero-logo.png" /* если svg: /brand/hero-logo.svg */
-            alt="BERBER CARS — logo"
-            className="pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] sm:w-[50vw] max-w-[820px] min-w-[260px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.08)]"
-            draggable={false}
-          />
+        {/* Desktop version: split hero with two videos */}
+        <div className="hidden lg:flex min-h-[70vh] relative">
+          {/* Left side - BERBER WARSZTAT with smoke video */}
+          <div className="relative w-1/2 overflow-hidden">
+            {/* Background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-neutral-800/20 via-transparent to-black/40 z-10" />
+
+            {/* Smoke video */}
+            <video
+              className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-screen"
+              src="/media/smoke.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
+            />
+
+            {/* Fallback smoke animation */}
+            <div className="absolute inset-0 pointer-events-none">
+              <span className="absolute left-1/4 top-1/3 w-[360px] h-[360px] rounded-full blur-[60px] bg-white/10 animate-[drift_24s_ease-in-out_infinite_alternate]" />
+              <span className="absolute left-2/3 top-1/4 w-[420px] h-[420px] rounded-full blur-[70px] bg-white/10 animate-[drift_30s_ease-in-out_infinite_alternate]" />
+            </div>
+
+            {/* Logo Warsztat */}
+            <div className="relative z-20 flex items-center justify-center h-full">
+              <img
+                src="/brand/Berber Warsztat LOGO Biale 1500x1500.png"
+                alt="BERBER WARSZTAT"
+                className="pointer-events-none select-none w-[45vw] max-w-[500px] min-w-[280px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* Center divider with perfectly smooth gradient blur */}
+          <div
+            className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 z-30 pointer-events-none backdrop-blur-[50px]"
+            style={{
+              width: "200px",
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 50%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 50%, transparent 100%)",
+            }}
+          >
+            {/* Subtle gradient overlay for depth */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/3 via-black/8 to-black/3" />
+          </div>
+
+          {/* Right side - BERBER LAKIERNIA with ink in water video */}
+          <div className="relative w-1/2 overflow-hidden">
+            {/* Background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-bl from-purple-900/20 via-transparent to-black/40 z-10" />
+
+            {/* Ink in water video */}
+            <video
+              className="absolute inset-0 w-full h-full object-cover"
+              src="/media/ink_in_water.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
+            />
+
+            {/* Logo Lakiernia */}
+            <div className="relative z-20 flex items-center justify-center h-full">
+              <img
+                src="/brand/Berber Lakiernia LOGO Biale 1500x1500.png"
+                alt="BERBER LAKIERNIA"
+                className="pointer-events-none select-none w-[45vw] max-w-[500px] min-w-[280px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
+                draggable={false}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom horizontal blur divider - fades hero into buttons section */}
+        <div
+          className="absolute left-0 right-0 z-40 pointer-events-none backdrop-blur-[50px]"
+          style={{
+            bottom: "0",
+            height: "120px",
+            transform: "translateY(50%)",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, black 50%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 50%, transparent 100%)",
+          }}
+        >
+          {/* Subtle gradient overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/3 via-black/8 to-black/3" />
         </div>
       </section>
-      <section id="hero-cta" className="bg-transparent">
+      <section id="hero-cta" className="bg-transparent relative">
         <div className="mx-auto max-w-7xl px-4 mt-10 sm:mt-12 pb-8">
           <div className="flex flex-col items-end text-right">
             <div className="flex flex-wrap items-center justify-end gap-3">
@@ -780,9 +873,9 @@ function Header({
       <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img
-            src="/logo.jpg"
+            src="/logo_berber.png"
             alt="BERBER CARS logo"
-            className="h-8 w-auto rounded-[2px]"
+            className="h-32 w-auto rounded-[2px]"
           />
         </div>
         <div className="flex items-center gap-4">
