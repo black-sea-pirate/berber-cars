@@ -510,6 +510,17 @@ export default function BerberCarsLanding() {
               aria-hidden="true"
             />
 
+            {/* Sparks video overlay */}
+            <video
+              className="absolute inset-0 w-full h-full object-cover mix-blend-screen"
+              src="/media/sparks.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
+            />
+
             {/* Fallback smoke animation */}
             <div className="absolute inset-0 pointer-events-none">
               <span className="absolute left-1/4 top-1/3 w-[360px] h-[360px] rounded-full blur-[60px] bg-white/10 animate-[drift_24s_ease-in-out_infinite_alternate]" />
