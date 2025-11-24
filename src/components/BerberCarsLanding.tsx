@@ -1135,7 +1135,7 @@ export default function BerberCarsLanding() {
               key: "owner1",
               role: t.roleOwner,
               name: t.nameOwner,
-              img: "/team/owner_1.JPG",
+              img: "/team/owner_1.jpg",
             },
             {
               key: "owner2",
