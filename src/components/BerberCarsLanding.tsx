@@ -1129,19 +1129,19 @@ export default function BerberCarsLanding() {
               key: "manager",
               role: t.roleServiceAdvisor,
               name: t.nameManager,
-              img: "/team/manager.jpg",
+              img: "/team/manager.JPG",
             },
             {
               key: "owner1",
               role: t.roleOwner,
               name: t.nameOwner,
-              img: "/team/owner_1.jpg",
+              img: "/team/owner_1.JPG",
             },
             {
               key: "owner2",
               role: t.roleOwner,
               name: t.nameOwner,
-              img: "/team/owner_2.jpg",
+              img: "/team/owner_2.JPG",
             },
           ].map((m) => (
             <article
