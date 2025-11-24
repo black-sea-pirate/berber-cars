@@ -745,7 +745,7 @@ export default function BerberCarsLanding() {
         {/* Mobile version: Warsztat logo with sparks */}
         <div className="block lg:hidden relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(40,40,45,0.6),rgba(10,10,12,0.9))]" />
-          
+
           {/* Smoke video */}
           <video
             className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-screen"
@@ -769,7 +769,7 @@ export default function BerberCarsLanding() {
           />
 
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
-          
+
           <div className="relative mx-auto max-w-7xl min-h-[70vh] px-4 py-20 sm:py-28 flex items-center justify-center">
             <img
               src="/brand/Berber Warsztat LOGO Biale 1500x1500.png"
