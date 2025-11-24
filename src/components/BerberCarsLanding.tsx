@@ -1,7 +1,7 @@
 // ВСТАВЬ САМЫМ ПЕРВЫМ
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react"; // добавили useEffect
+import React, { useMemo, useState, useEffect, useRef } from "react";
 
 /**
  * BERBER CARS — Single‑Page Frontend (React + Tailwind)
@@ -39,7 +39,15 @@ const i18n = {
     teamTitle: "Zobacz kto będzie Cię obsługiwał.",
     roleServiceAdvisor: "Doradca serwisowy",
     roleOwner: "Właściciel",
+    nameManager: "Menadżer Serwisu",
+    nameOwner: "Współwłaściciel",
+    servicesWarsztat: "Usługi warsztatu",
+    servicesLakiernia: "Usługi lakierni",
     services: "Usługi",
+    beforeAfterTitle: "Nasze realizacje",
+    beforeAfterSubtitle: "Zobacz efekty naszej pracy",
+    beforeLabel: "Przed",
+    afterLabel: "Po",
     contact: "Kontakt",
     hours: "Godziny",
     address: "Adres",
@@ -57,6 +65,21 @@ const i18n = {
       "Klimatyzacja",
       "Wulkanizacja",
     ],
+    lakierniaServices: [
+      "Lokalne malowanie i farba",
+      "Pełne malowanie elementu",
+      "Pełne malowanie pojazdu",
+      "Prostowanie i przywrócenie geometrii części",
+      "Prace na stanowisku prostowniczym",
+      "Naprawa i odnawianie części plastikowych",
+      "Przygotowanie do malowania",
+      "Dobór koloru i malowanie pod fabrykę",
+      "Polerowanie po malowaniu",
+      "Polerowanie i renowacja reflektorów",
+      "Malowanie pojedynczych elementów",
+      "Zabezpieczenie antykorozyjne",
+      "Polerowanie szyb",
+    ],
   },
   ua: {
     lang: "UA",
@@ -67,7 +90,15 @@ const i18n = {
     teamTitle: "Познайомся з тими, хто буде тебе обслуговувати.",
     roleServiceAdvisor: "Сервісний радник",
     roleOwner: "Власник",
+    nameManager: "Менеджер сервісу",
+    nameOwner: "Співвласник",
+    servicesWarsztat: "Послуги майстерні",
+    servicesLakiernia: "Послуги малярні",
     services: "Послуги",
+    beforeAfterTitle: "Наші реалізації",
+    beforeAfterSubtitle: "Подивіться на результати нашої роботи",
+    beforeLabel: "До",
+    afterLabel: "Після",
     contact: "Контакти",
     hours: "Години роботи",
     address: "Адреса",
@@ -85,6 +116,21 @@ const i18n = {
       "Кондиціонер",
       "Шиномонтаж",
     ],
+    lakierniaServices: [
+      "Локальний ремонт і фарбування",
+      "Повне фарбування елемента",
+      "Повне фарбування автомобіля",
+      "Рихтування та відновлення геометрії деталі",
+      "Стапельні роботи",
+      "Ремонт і відновлення пластикових деталей",
+      "Підготовка до фарбування",
+      "Підбір кольору та фарбування під завод",
+      "Полірування після фарбування",
+      "Полірування та відновлення фар",
+      "Фарбування окремих елементів",
+      "Антикорозійна обробка",
+      "Полірування скла",
+    ],
   },
   ru: {
     lang: "RU",
@@ -95,7 +141,15 @@ const i18n = {
     teamTitle: "Познакомьтесь с теми, кто будет вас обслуживать.",
     roleServiceAdvisor: "Сервисный консультант",
     roleOwner: "Владелец",
+    nameManager: "Менеджер сервиса",
+    nameOwner: "Совладелец",
+    servicesWarsztat: "Услуги мастерской",
+    servicesLakiernia: "Услуги малярни",
     services: "Услуги",
+    beforeAfterTitle: "Наши работы",
+    beforeAfterSubtitle: "Посмотрите на результаты нашей работы",
+    beforeLabel: "До",
+    afterLabel: "После",
     contact: "Контакты",
     hours: "Часы работы",
     address: "Адрес",
@@ -113,6 +167,21 @@ const i18n = {
       "Кондиционер",
       "Шиномонтаж",
     ],
+    lakierniaServices: [
+      "Локальный ремонт и покраска",
+      "Полная покраска элемента",
+      "Полная покраска автомобиля",
+      "Рихтовка и восстановление геометрии детали",
+      "Стапельные работы",
+      "Ремонт и восстановление пластиковых деталей",
+      "Подготовка к покраске",
+      "Подбор цвета и покраска под завод",
+      "Полировка после покраски",
+      "Полировка и восстановление фар",
+      "Покраска отдельных элементов",
+      "Антикоррозийная обработка",
+      "Полировка стёкол",
+    ],
   },
   en: {
     lang: "EN",
@@ -123,7 +192,15 @@ const i18n = {
     teamTitle: "Meet the team who will serve you.",
     roleServiceAdvisor: "Service Advisor",
     roleOwner: "Owner",
+    nameManager: "Service Manager",
+    nameOwner: "Co-owner",
+    servicesWarsztat: "Workshop services",
+    servicesLakiernia: "Body shop services",
     services: "Services",
+    beforeAfterTitle: "Our Work",
+    beforeAfterSubtitle: "See the results of our work",
+    beforeLabel: "Before",
+    afterLabel: "After",
     contact: "Contact",
     hours: "Opening hours",
     address: "Address",
@@ -140,6 +217,21 @@ const i18n = {
       "Chip‑tuning",
       "Air‑con",
       "Tyres",
+    ],
+    lakierniaServices: [
+      "Local repair and painting",
+      "Full element painting",
+      "Full vehicle painting",
+      "Straightening and part geometry restoration",
+      "Frame straightening work",
+      "Plastic parts repair and restoration",
+      "Paint preparation",
+      "Color matching and factory finish",
+      "Post-paint polishing",
+      "Headlight polishing and restoration",
+      "Individual element painting",
+      "Anti-corrosion treatment",
+      "Glass polishing",
     ],
   },
 };
@@ -224,12 +316,131 @@ function IconMail(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+// Before/After Slider Component
+function BeforeAfterSlider({
+  beforeImage,
+  afterImage,
+  beforeLabel,
+  afterLabel,
+}: {
+  beforeImage: string;
+  afterImage: string;
+  beforeLabel: string;
+  afterLabel: string;
+}) {
+  const [sliderPosition, setSliderPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMove = (clientX: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const percentage = (x / rect.width) * 100;
+    setSliderPosition(percentage);
+  };
+
+  const handleMouseDown = () => setIsDragging(true);
+  const handleMouseUp = () => setIsDragging(false);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) handleMove(e.clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length > 0) handleMove(e.touches[0].clientX);
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    handleMove(e.clientX);
+  };
+
+  useEffect(() => {
+    const handleGlobalMouseUp = () => setIsDragging(false);
+    window.addEventListener("mouseup", handleGlobalMouseUp);
+    return () => window.removeEventListener("mouseup", handleGlobalMouseUp);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full h-full overflow-hidden rounded-2xl cursor-ew-resize select-none"
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
+      onClick={handleClick}
+      onMouseLeave={handleMouseUp}
+    >
+      {/* After Image (background) */}
+      <div className="absolute inset-0">
+        <img
+          src={afterImage}
+          alt={afterLabel}
+          className="w-full h-full object-cover pointer-events-none"
+          draggable={false}
+        />
+        <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-semibold">
+          {afterLabel}
+        </div>
+      </div>
+
+      {/* Before Image (clipped) */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+      >
+        <img
+          src={beforeImage}
+          alt={beforeLabel}
+          className="w-full h-full object-cover pointer-events-none"
+          draggable={false}
+        />
+        <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-semibold">
+          {beforeLabel}
+        </div>
+      </div>
+
+      {/* Slider Line */}
+      <div
+        className="absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_20px_rgba(255,255,255,0.5)] pointer-events-none"
+        style={{ left: `${sliderPosition}%` }}
+      >
+        {/* Slider Handle */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center cursor-ew-resize pointer-events-auto"
+          onMouseDown={handleMouseDown}
+          onTouchStart={() => setIsDragging(true)}
+        >
+          <svg
+            className="w-6 h-6 text-neutral-900"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M15 19l-7-7 7-7M9 19l-7-7 7-7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Services Carousel Component with infinite auto-rotation
-function ServicesCarousel({ services }: { services: string[] }) {
+function ServicesCarousel({
+  services,
+  type,
+}: {
+  services: string[];
+  type: "warsztat" | "lakiernia";
+}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  const SERVICE_IMAGES = [
+  const WARSZTAT_IMAGES = [
     { key: "alignment", img: "/services/Geometria 3D.png" },
     { key: "diagnostics", img: "/services/Diagnostyka.png" },
     { key: "electronics", img: "/services/Elektronika.png" },
@@ -237,6 +448,50 @@ function ServicesCarousel({ services }: { services: string[] }) {
     { key: "ac", img: "/services/Klimatyzacja.png" },
     { key: "tyres", img: "/services/Wulkanizacja.png" },
   ];
+
+  // Lakiernia service images
+  const LAKIERNIA_IMAGES = [
+    { key: "lokalne", img: "/services/lakiernia/Lokalne_malowanie.PNG" },
+    {
+      key: "pelne-element",
+      img: "/services/lakiernia/Pelne_malowanie_elementu.PNG",
+    },
+    {
+      key: "pelne-pojazd",
+      img: "/services/lakiernia/Pelne_malowanie_pojazdu.PNG",
+    },
+    { key: "geometria", img: "/services/lakiernia/geometrii_części.PNG" },
+    {
+      key: "prostownicze",
+      img: "/services/lakiernia/Prace_na_stanowisku_prostowniczym.PNG",
+    },
+    {
+      key: "plastik",
+      img: "/services/lakiernia/Naprawa_czesci_plastikowych.PNG",
+    },
+    {
+      key: "przygotowanie",
+      img: "/services/lakiernia/Przygotowanie_do_malowania.PNG",
+    },
+    { key: "dobor", img: "/services/lakiernia/Dobor_koloru.PNG" },
+    { key: "polerowanie", img: "/services/lakiernia/Polerowanie.PNG" },
+    {
+      key: "reflektory",
+      img: "/services/lakiernia/Polerowanie_reflektorow.PNG",
+    },
+    {
+      key: "pojedyncze",
+      img: "/services/lakiernia/Malowanie_pojedynczych_elementow.PNG",
+    },
+    {
+      key: "antykorozja",
+      img: "/services/lakiernia/Zabezpieczenie_antykorozyjne.PNG",
+    },
+    { key: "szyby", img: "/services/lakiernia/Polerowanie_szyb.PNG" },
+  ];
+
+  const SERVICE_IMAGES =
+    type === "warsztat" ? WARSZTAT_IMAGES : LAKIERNIA_IMAGES;
 
   // Auto-rotate every 1.5 seconds when not hovered
   useEffect(() => {
@@ -279,7 +534,7 @@ function ServicesCarousel({ services }: { services: string[] }) {
       {/* Previous Button */}
       <button
         onClick={goToPrev}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 -ml-4 sm:-ml-6 group"
+        className="absolute left-0 top-[40%] -translate-y-1/2 z-10 -ml-4 sm:-ml-6 group"
         aria-label="Previous service"
       >
         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/20 group-hover:border-rose-500 bg-black/40 backdrop-blur flex items-center justify-center transition-all duration-300">
@@ -309,8 +564,8 @@ function ServicesCarousel({ services }: { services: string[] }) {
                 key={`${item.index}-${idx}`}
                 className={`flex-shrink-0 transition-all duration-500 ${
                   isCenter
-                    ? "w-72 sm:w-96 opacity-100 scale-100"
-                    : "w-56 sm:w-72 opacity-50 scale-90"
+                    ? "w-[330px] sm:w-[440px] opacity-100 scale-100"
+                    : "w-[257px] sm:w-[330px] opacity-100 scale-90"
                 }`}
               >
                 <div className="space-y-4">
@@ -332,7 +587,7 @@ function ServicesCarousel({ services }: { services: string[] }) {
                   </div>
                   {/* Service name below card */}
                   <div
-                    className={`text-center text-base sm:text-lg transition-colors select-none ${
+                    className={`text-center text-base sm:text-lg transition-colors select-none min-h-[3rem] flex items-center justify-center ${
                       isCenter ? "text-white font-semibold" : "text-neutral-400"
                     }`}
                   >
@@ -348,7 +603,7 @@ function ServicesCarousel({ services }: { services: string[] }) {
       {/* Next Button */}
       <button
         onClick={goToNext}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 -mr-4 sm:-mr-6 group"
+        className="absolute right-0 top-[40%] -translate-y-1/2 z-10 -mr-4 sm:-mr-6 group"
         aria-label="Next service"
       >
         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/20 group-hover:border-rose-500 bg-black/40 backdrop-blur flex items-center justify-center transition-all duration-300">
@@ -389,6 +644,7 @@ function ServicesCarousel({ services }: { services: string[] }) {
 
 export default function BerberCarsLanding() {
   const [lang, setLang] = useState<LangKey>("pl");
+  const [mounted, setMounted] = useState(false);
   const t = useMemo(() => i18n[lang], [lang]);
 
   // Dynamic font class for headings: Oswald for RU/UA (Cyrillic), Bebas Neue for PL/EN
@@ -400,20 +656,23 @@ export default function BerberCarsLanding() {
 
   // Persist language and keep <html lang> in sync for a11y
   useEffect(() => {
+    setMounted(true);
     try {
       const stored =
         (localStorage.getItem("bc.lang") as LangKey | null) || null;
       if (stored && i18n[stored]) setLang(stored);
     } catch {}
   }, []);
+
   useEffect(() => {
+    if (!mounted) return;
     try {
       localStorage.setItem("bc.lang", lang);
     } catch {}
     if (typeof document !== "undefined") {
       document.documentElement.setAttribute("lang", lang);
     }
-  }, [lang]);
+  }, [lang, mounted]);
   // ---- services meta ----
   type ServiceMeta =
     | { key: "alignment"; img: string }
@@ -471,22 +730,51 @@ export default function BerberCarsLanding() {
     },
   };
 
+  // Detect Cyrillic for tighter letter spacing
+  const isCyrillic = lang === "ua" || lang === "ru";
+  const cyrillicClass = isCyrillic ? "tracking-tight" : "";
+
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 selection:bg-white/10">
+    <div
+      className={`min-h-screen bg-neutral-950 text-neutral-100 selection:bg-white/10 ${cyrillicClass}`}
+    >
       {/* Global max width */}
       <Header lang={lang} setLang={setLang} headingFont={headingFont} />
       {/* HERO */}
       <section className="relative overflow-visible">
-        {/* Mobile version: single centered logo (old design) */}
-        <div className="block lg:hidden">
+        {/* Mobile version: Warsztat logo with sparks */}
+        <div className="block lg:hidden relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(40,40,45,0.6),rgba(10,10,12,0.9))]" />
-          <SmokeLayer />
+          
+          {/* Smoke video */}
+          <video
+            className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-screen"
+            src="/media/smoke.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+          />
+
+          {/* Sparks video overlay */}
+          <video
+            className="absolute inset-0 w-full h-full object-cover mix-blend-screen"
+            src="/media/sparks.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+          />
+
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
-          <div className="relative mx-auto max-w-7xl min-h-[70vh] px-4 py-20 sm:py-28">
+          
+          <div className="relative mx-auto max-w-7xl min-h-[70vh] px-4 py-20 sm:py-28 flex items-center justify-center">
             <img
-              src="/brand/hero-logo.png"
-              alt="BERBER CARS — logo"
-              className="pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] sm:w-[50vw] max-w-[820px] min-w-[260px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.08)]"
+              src="/brand/Berber Warsztat LOGO Biale 1500x1500.png"
+              alt="BERBER WARSZTAT"
+              className="pointer-events-none select-none w-[80vw] sm:w-[60vw] max-w-[600px] min-w-[320px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
               draggable={false}
             />
           </div>
@@ -647,18 +935,62 @@ export default function BerberCarsLanding() {
           </div>
         </div>
       </section>
-      {/* SERVICES */}
-      <section id="services" className="mx-auto max-w-7xl px-4 py-16 sm:py-20">
-        <div className="flex items-end justify-between">
-          <h2
-            className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
-          >
-            {t.services}
-          </h2>
-          <div className="text-neutral-400 text-sm">BERBER CARS</div>
+      {/* SERVICES WARSZTAT */}
+      <section
+        id="services-warsztat"
+        className="relative py-16 sm:py-20 overflow-hidden"
+      >
+        {/* Background image - full width, scaled */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src="/services/background/stream_of_smoke.png"
+            alt=""
+            className="w-full h-full object-cover object-center"
+            loading="lazy"
+          />
         </div>
 
-        <ServicesCarousel services={t.quickServices} />
+        {/* Content with max-width */}
+        <div className="relative mx-auto max-w-7xl px-4">
+          <div className="flex items-end justify-between">
+            <h2
+              className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
+            >
+              {t.servicesWarsztat}
+            </h2>
+          </div>
+
+          <ServicesCarousel services={t.quickServices} type="warsztat" />
+        </div>
+      </section>
+
+      {/* SERVICES LAKIERNIA */}
+      <section
+        id="services-lakiernia"
+        className="relative pb-16 sm:pb-20 overflow-hidden"
+      >
+        {/* Background image - full width, scaled */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src="/services/background/ink_stream.png"
+            alt=""
+            className="w-full h-full object-cover object-center"
+            loading="lazy"
+          />
+        </div>
+
+        {/* Content with max-width */}
+        <div className="relative mx-auto max-w-7xl px-4">
+          <div className="flex items-end justify-between">
+            <h2
+              className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
+            >
+              {t.servicesLakiernia}
+            </h2>
+          </div>
+
+          <ServicesCarousel services={t.lakierniaServices} type="lakiernia" />
+        </div>
       </section>
       {/* CONTACT + HOURS */}
       <section id="contact" className="mx-auto max-w-7xl px-4 pb-8">
@@ -725,7 +1057,7 @@ export default function BerberCarsLanding() {
                   </span>{" "}
                   08:00–15:00
                 </li>
-                <li>
+                <li className="whitespace-nowrap">
                   <span className="inline-block w-16 text-neutral-400">
                     {t.sun}
                   </span>
@@ -751,6 +1083,37 @@ export default function BerberCarsLanding() {
           </div>
         </div>
       </section>
+
+      {/* BEFORE & AFTER - TEMPORARILY HIDDEN (waiting for materials) */}
+      {/* <section
+        id="before-after"
+        className="mx-auto max-w-7xl px-4 py-16 sm:py-20"
+      >
+        <div className="text-center mb-12">
+          <h2
+            className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
+          >
+            {t.beforeAfterTitle}
+          </h2>
+          <p className="mt-3 text-lg text-neutral-400">
+            {t.beforeAfterSubtitle}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8">
+          <div className="rounded-2xl border border-white/5 bg-white/5 overflow-hidden">
+            <div className="aspect-[1670/652]">
+              <BeforeAfterSlider
+                beforeImage="/before_after/before_cls.jpg"
+                afterImage="/before_after/after_cls.png"
+                beforeLabel={t.beforeLabel}
+                afterLabel={t.afterLabel}
+              />
+            </div>
+          </div>
+        </div>
+      </section> */}
+
       {/* TEAM */}
       <section id="team" className="mx-auto max-w-7xl px-4 py-16 sm:py-20">
         <h2
@@ -764,20 +1127,20 @@ export default function BerberCarsLanding() {
             {
               key: "manager",
               role: t.roleServiceAdvisor,
-              name: "Menadżer Serwisu",
-              img: "/team/manager.jpg",
+              name: t.nameManager,
+              img: "/team/manager.png",
             },
             {
               key: "owner1",
               role: t.roleOwner,
-              name: "Współwłaściciel",
+              name: t.nameOwner,
               img: "/team/owner_1.jpg",
             },
             {
               key: "owner2",
               role: t.roleOwner,
-              name: "Współwłaściciel",
-              img: "/team/owner_2.jpg",
+              name: t.nameOwner,
+              img: "/team/owner_2.png",
             },
           ].map((m) => (
             <article
@@ -808,6 +1171,7 @@ export default function BerberCarsLanding() {
           ))}
         </div>
       </section>
+
       {/* FOOTER */}
       <footer className="mt-12 border-t border-white/5 bg-black/20">
         <div className="mx-auto max-w-7xl px-4 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
