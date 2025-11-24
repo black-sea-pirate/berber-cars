@@ -559,13 +559,14 @@ function ServicesCarousel({
         <div className="flex items-center justify-center gap-4 sm:gap-8">
           {getVisibleItems().map((item, idx) => {
             const isCenter = idx === 1;
+            const isSide = !isCenter;
             return (
               <div
                 key={`${item.index}-${idx}`}
                 className={`flex-shrink-0 transition-all duration-500 ${
                   isCenter
                     ? "w-[330px] sm:w-[440px] opacity-100 scale-100"
-                    : "w-[257px] sm:w-[330px] opacity-100 scale-90"
+                    : "w-[257px] sm:w-[330px] opacity-100 scale-90 hidden sm:block"
                 }`}
               >
                 <div className="space-y-4">
@@ -1128,7 +1129,7 @@ export default function BerberCarsLanding() {
               key: "manager",
               role: t.roleServiceAdvisor,
               name: t.nameManager,
-              img: "/team/manager.png",
+              img: "/team/manager.jpg",
             },
             {
               key: "owner1",
@@ -1140,7 +1141,7 @@ export default function BerberCarsLanding() {
               key: "owner2",
               role: t.roleOwner,
               name: t.nameOwner,
-              img: "/team/owner_2.png",
+              img: "/team/owner_2.jpg",
             },
           ].map((m) => (
             <article
