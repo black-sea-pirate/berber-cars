@@ -1,7 +1,13 @@
 // ВСТАВЬ САМЫМ ПЕРВЫМ
 "use client";
 
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from "react";
 
 /**
  * BERBER CARS — Single‑Page Frontend (React + Tailwind)
@@ -36,7 +42,7 @@ const i18n = {
     heroSubtitle: "Geometria 3D \u2022 Diagnostyka \u2022 Elektronika",
     ctaBook: "Umów wizytę",
     ctaCall: "Zadzwoń",
-    teamTitle: "Zobacz kto będzie Cię obsługiwał.",
+    teamTitle: "Zobacz kto będzie Cię obsługiwał...",
     roleServiceAdvisor: "Doradca serwisowy",
     roleOwner: "Właściciel",
     nameManager: "Menadżer Serwisu",
@@ -87,7 +93,7 @@ const i18n = {
     heroSubtitle: "3D геометрія \u2022 Діагностика \u2022 Електроніка",
     ctaBook: "Записатися",
     ctaCall: "Подзвонити",
-    teamTitle: "Познайомся з тими, хто буде тебе обслуговувати.",
+    teamTitle: "Познайомся з тими, хто буде тебе обслуговувати...",
     roleServiceAdvisor: "Сервісний радник",
     roleOwner: "Власник",
     nameManager: "Менеджер сервісу",
@@ -138,7 +144,7 @@ const i18n = {
     heroSubtitle: "3D геометрия \u2022 Диагностика \u2022 Электроника",
     ctaBook: "Записаться",
     ctaCall: "Позвонить",
-    teamTitle: "Познакомьтесь с теми, кто будет вас обслуживать.",
+    teamTitle: "Познакомьтесь с теми, кто будет вас обслуживать...",
     roleServiceAdvisor: "Сервисный консультант",
     roleOwner: "Владелец",
     nameManager: "Менеджер сервиса",
@@ -189,7 +195,7 @@ const i18n = {
     heroSubtitle: "3D Alignment \u2022 Diagnostics \u2022 Electronics",
     ctaBook: "Book now",
     ctaCall: "Call",
-    teamTitle: "Meet the team who will serve you.",
+    teamTitle: "Meet the team who will serve you...",
     roleServiceAdvisor: "Service Advisor",
     roleOwner: "Owner",
     nameManager: "Service Manager",
@@ -235,6 +241,93 @@ const i18n = {
     ],
   },
 };
+
+type ServiceImage = {
+  key: string;
+  img: string;
+};
+
+type ServiceItem = {
+  id: string;
+  service: string;
+  image: string;
+};
+
+const WARSZTAT_IMAGES: ServiceImage[] = [
+  { key: "alignment", img: "/services/Geometria 3D.png" },
+  { key: "diagnostics", img: "/services/Diagnostyka.png" },
+  { key: "electronics", img: "/services/Elektronika.png" },
+  { key: "chiptuning", img: "/services/Chip-tuning.png" },
+  { key: "ac", img: "/services/Klimatyzacja.png" },
+  { key: "tyres", img: "/services/Wulkanizacja.png" },
+];
+
+const LAKIERNIA_IMAGES: ServiceImage[] = [
+  { key: "lokalne", img: "/services/lakiernia/Lokalne_malowanie.PNG" },
+  {
+    key: "pelne-element",
+    img: "/services/lakiernia/Pelne_malowanie_elementu.PNG",
+  },
+  {
+    key: "pelne-pojazd",
+    img: "/services/lakiernia/Pelne_malowanie_pojazdu.PNG",
+  },
+  { key: "geometria", img: "/services/lakiernia/geometrii_części.PNG" },
+  {
+    key: "prostownicze",
+    img: "/services/lakiernia/Prace_na_stanowisku_prostowniczym.PNG",
+  },
+  {
+    key: "plastik",
+    img: "/services/lakiernia/Naprawa_czesci_plastikowych.PNG",
+  },
+  {
+    key: "przygotowanie",
+    img: "/services/lakiernia/Przygotowanie_do_malowania.PNG",
+  },
+  { key: "dobor", img: "/services/lakiernia/Dobor_koloru.PNG" },
+  { key: "polerowanie", img: "/services/lakiernia/Polerowanie.PNG" },
+  {
+    key: "reflektory",
+    img: "/services/lakiernia/Polerowanie_reflektorow.PNG",
+  },
+  {
+    key: "pojedyncze",
+    img: "/services/lakiernia/Malowanie_pojedynczych_elementow.PNG",
+  },
+  {
+    key: "antykorozja",
+    img: "/services/lakiernia/Zabezpieczenie_antykorozyjne.PNG",
+  },
+  { key: "szyby", img: "/services/lakiernia/Polerowanie_szyb.PNG" },
+];
+
+type Position = "active" | "prev" | "next" | "other";
+
+function getCardPosition(
+  idx: number,
+  current: number,
+  length: number
+): Position {
+  if (length === 0) {
+    return "other";
+  }
+  if (idx === current) {
+    return "active";
+  }
+
+  const prevIndex = (current - 1 + length) % length;
+  const nextIndex = (current + 1) % length;
+
+  if (idx === prevIndex) {
+    return "prev";
+  }
+  if (idx === nextIndex) {
+    return "next";
+  }
+
+  return "other";
+}
 
 type LangKey = keyof typeof i18n;
 
@@ -437,93 +530,214 @@ function ServicesCarousel({
   services: string[];
   type: "warsztat" | "lakiernia";
 }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [withTransition, setWithTransition] = useState(true);
 
-  const WARSZTAT_IMAGES = [
-    { key: "alignment", img: "/services/Geometria 3D.png" },
-    { key: "diagnostics", img: "/services/Diagnostyka.png" },
-    { key: "electronics", img: "/services/Elektronika.png" },
-    { key: "chiptuning", img: "/services/Chip-tuning.png" },
-    { key: "ac", img: "/services/Klimatyzacja.png" },
-    { key: "tyres", img: "/services/Wulkanizacja.png" },
-  ];
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Lakiernia service images
-  const LAKIERNIA_IMAGES = [
-    { key: "lokalne", img: "/services/lakiernia/Lokalne_malowanie.PNG" },
-    {
-      key: "pelne-element",
-      img: "/services/lakiernia/Pelne_malowanie_elementu.PNG",
-    },
-    {
-      key: "pelne-pojazd",
-      img: "/services/lakiernia/Pelne_malowanie_pojazdu.PNG",
-    },
-    { key: "geometria", img: "/services/lakiernia/geometrii_części.PNG" },
-    {
-      key: "prostownicze",
-      img: "/services/lakiernia/Prace_na_stanowisku_prostowniczym.PNG",
-    },
-    {
-      key: "plastik",
-      img: "/services/lakiernia/Naprawa_czesci_plastikowych.PNG",
-    },
-    {
-      key: "przygotowanie",
-      img: "/services/lakiernia/Przygotowanie_do_malowania.PNG",
-    },
-    { key: "dobor", img: "/services/lakiernia/Dobor_koloru.PNG" },
-    { key: "polerowanie", img: "/services/lakiernia/Polerowanie.PNG" },
-    {
-      key: "reflektory",
-      img: "/services/lakiernia/Polerowanie_reflektorow.PNG",
-    },
-    {
-      key: "pojedyncze",
-      img: "/services/lakiernia/Malowanie_pojedynczych_elementow.PNG",
-    },
-    {
-      key: "antykorozja",
-      img: "/services/lakiernia/Zabezpieczenie_antykorozyjne.PNG",
-    },
-    { key: "szyby", img: "/services/lakiernia/Polerowanie_szyb.PNG" },
-  ];
+  const [layout, setLayout] = useState({ slide: 0, gap: 0, container: 0 });
 
-  const SERVICE_IMAGES =
+  const serviceImages =
     type === "warsztat" ? WARSZTAT_IMAGES : LAKIERNIA_IMAGES;
 
-  // Auto-rotate every 1.5 seconds when not hovered
+  const items = useMemo<ServiceItem[]>(() => {
+    if (!services.length) {
+      return [];
+    }
+
+    const hasImages = serviceImages.length > 0;
+    const fallbackImage = hasImages ? serviceImages[0]?.img ?? "" : "";
+
+    return services.map((service, index) => {
+      const image = hasImages
+        ? serviceImages[index % serviceImages.length]
+        : undefined;
+      return {
+        id: `${type}-${image?.key ?? "service"}-${index}`,
+        service,
+        image: image?.img ?? fallbackImage,
+      };
+    });
+  }, [services, serviceImages, type]);
+
+  const extendedItems = useMemo<ServiceItem[]>(() => {
+    if (!items.length) {
+      return [];
+    }
+
+    const first = items[0];
+    const last = items[items.length - 1];
+
+    return [
+      { ...last, id: `${last.id}-clone-head` },
+      ...items.map((item) => ({ ...item })),
+      { ...first, id: `${first.id}-clone-tail` },
+    ];
+  }, [items]);
+
+  const realActiveIndex = useMemo(() => {
+    if (!items.length) {
+      return 0;
+    }
+    return (currentIndex - 1 + items.length) % items.length;
+  }, [currentIndex, items.length]);
+
+  const canNavigate = items.length > 1;
+
+  const updateLayout = useCallback(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    if (!containerRef.current || !trackRef.current) {
+      return;
+    }
+
+    const activeSlide =
+      slideRefs.current[currentIndex] ?? slideRefs.current[1] ?? null;
+
+    if (!activeSlide) {
+      return;
+    }
+
+    const containerWidth = containerRef.current.getBoundingClientRect().width;
+    const slideWidth = activeSlide.getBoundingClientRect().width;
+    const computed = window.getComputedStyle(trackRef.current);
+    const gapRaw = computed.columnGap || computed.gap || "0";
+    const parsedGap = parseFloat(gapRaw);
+    const gap = Number.isFinite(parsedGap) ? parsedGap : 0;
+
+    setLayout((prev) => {
+      if (
+        Math.abs(prev.slide - slideWidth) < 0.5 &&
+        Math.abs(prev.gap - gap) < 0.5 &&
+        Math.abs(prev.container - containerWidth) < 0.5
+      ) {
+        return prev;
+      }
+
+      return {
+        slide: slideWidth,
+        gap,
+        container: containerWidth,
+      };
+    });
+  }, [currentIndex]);
+
   useEffect(() => {
-    if (!isHovered) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % services.length);
-      }, 1500);
-      return () => clearInterval(interval);
+    if (typeof window === "undefined") {
+      return;
     }
-  }, [isHovered, services.length]);
 
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % services.length);
-  };
+    updateLayout();
 
-  const goToPrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + services.length) % services.length);
-  };
+    const handleResize = () => updateLayout();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [updateLayout, extendedItems.length, type]);
 
-  // Calculate visible items (show 3 items at a time)
-  const getVisibleItems = () => {
-    const items = [];
-    for (let i = -1; i <= 1; i++) {
-      const index = (currentIndex + i + services.length) % services.length;
-      items.push({
-        service: services[index],
-        image: SERVICE_IMAGES[index],
-        index,
-      });
+  useEffect(() => {
+    if (!items.length) {
+      setCurrentIndex(0);
+      setIsAnimating(false);
+      return;
     }
-    return items;
-  };
+
+    setWithTransition(false);
+    setCurrentIndex(1);
+    setIsAnimating(false);
+  }, [items.length]);
+
+  useEffect(() => {
+    updateLayout();
+  }, [updateLayout, currentIndex, extendedItems.length]);
+
+  const goToNext = useCallback(() => {
+    if (!canNavigate || isAnimating) {
+      return;
+    }
+    setIsAnimating(true);
+    setWithTransition(true);
+    setCurrentIndex((prev) => prev + 1);
+  }, [canNavigate, isAnimating]);
+
+  const goToPrev = useCallback(() => {
+    if (!canNavigate || isAnimating) {
+      return;
+    }
+    setIsAnimating(true);
+    setWithTransition(true);
+    setCurrentIndex((prev) => prev - 1);
+  }, [canNavigate, isAnimating]);
+
+  useEffect(() => {
+    if (!canNavigate || isHovered) {
+      return;
+    }
+
+    const id = window.setInterval(() => {
+      goToNext();
+    }, 4000);
+
+    return () => window.clearInterval(id);
+  }, [goToNext, canNavigate, isHovered]);
+
+  const goToIndex = useCallback(
+    (target: number) => {
+      if (!canNavigate || target === realActiveIndex || isAnimating) {
+        return;
+      }
+      setWithTransition(true);
+      setIsAnimating(true);
+      setCurrentIndex(target + 1);
+    },
+    [canNavigate, realActiveIndex, isAnimating]
+  );
+
+  const handleTransitionEnd = useCallback(() => {
+    if (!withTransition) {
+      return;
+    }
+
+    setIsAnimating(false);
+
+    if (!extendedItems.length) {
+      return;
+    }
+
+    if (currentIndex === extendedItems.length - 1) {
+      setWithTransition(false);
+      setCurrentIndex(1);
+      return;
+    }
+
+    if (currentIndex === 0) {
+      setWithTransition(false);
+      setCurrentIndex(extendedItems.length - 2);
+    }
+  }, [withTransition, currentIndex, extendedItems.length]);
+
+  useEffect(() => {
+    if (withTransition) {
+      return;
+    }
+
+    const id = window.requestAnimationFrame(() => {
+      updateLayout();
+      setWithTransition(true);
+    });
+
+    return () => window.cancelAnimationFrame(id);
+  }, [withTransition, updateLayout]);
+
+  const stride = layout.slide + layout.gap;
+  const translateX =
+    stride > 0
+      ? layout.container / 2 - currentIndex * stride - layout.slide / 2
+      : 0;
 
   return (
     <div
@@ -536,8 +750,9 @@ function ServicesCarousel({
         onClick={goToPrev}
         className="absolute left-0 top-[40%] -translate-y-1/2 z-10 -ml-4 sm:-ml-6 group"
         aria-label="Previous service"
+        disabled={!canNavigate}
       >
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/20 group-hover:border-rose-500 bg-black/40 backdrop-blur flex items-center justify-center transition-all duration-300">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/20 group-hover:border-rose-500 bg-black/40 backdrop-blur flex items-center justify-center transition-all duration-300 disabled:opacity-30">
           <svg
             className="w-5 h-5 sm:w-6 sm:h-6 text-white/60 group-hover:text-rose-500 transition-colors"
             fill="none"
@@ -555,41 +770,69 @@ function ServicesCarousel({
       </button>
 
       {/* Carousel Items */}
-      <div className="overflow-hidden px-4">
-        <div className="flex items-center justify-center gap-4 sm:gap-8">
-          {getVisibleItems().map((item, idx) => {
-            const isCenter = idx === 1;
-            const isSide = !isCenter;
+      <div ref={containerRef} className="overflow-hidden px-4">
+        <div
+          ref={trackRef}
+          className={`flex items-center gap-4 sm:gap-8 ${
+            withTransition ? "transition-transform duration-500 ease-out" : ""
+          }`}
+          style={{ transform: `translate3d(${translateX - 15}px, 0, 0)` }}
+          onTransitionEnd={handleTransitionEnd}
+        >
+          {extendedItems.map((item, idx) => {
+            const position = getCardPosition(
+              idx,
+              currentIndex,
+              extendedItems.length
+            );
+            const isActive = position === "active";
+            const isSide = position === "prev" || position === "next";
+            const sideTranslate =
+              position === "prev"
+                ? "sm:translate-x-6 lg:translate-x-17"
+                : position === "next"
+                ? "sm:-translate-x-6 lg:-translate-x-17"
+                : "";
+
             return (
               <div
-                key={`${item.index}-${idx}`}
-                className={`flex-shrink-0 transition-all duration-500 ${
-                  isCenter
-                    ? "w-[330px] sm:w-[440px] opacity-100 scale-100"
-                    : "w-[257px] sm:w-[330px] opacity-100 scale-90 hidden sm:block"
-                }`}
+                key={item.id}
+                ref={(el) => {
+                  slideRefs.current[idx] = el;
+                }}
+                className="flex-shrink-0 px-2 sm:px-4"
               >
-                <div className="space-y-4">
-                  {/* Image card - full size */}
+                <div
+                  className={`w-[330px] sm:w-[440px] space-y-4 transform-gpu transition-all duration-500 ${
+                    isActive
+                      ? "scale-100 opacity-100"
+                      : isSide
+                      ? `opacity-0 sm:opacity-100 scale-[0.78] ${sideTranslate}`
+                      : "opacity-0 scale-[0.85] pointer-events-none"
+                  }`}
+                >
                   <div
-                    className={`rounded-2xl border overflow-hidden shadow-lg transition-all duration-300 aspect-square ${
-                      isCenter
+                    className={`rounded-2xl border overflow-hidden shadow-lg transition-colors duration-500 aspect-square ${
+                      isActive
                         ? "border-white/10 bg-white/10 hover:bg-white/15"
                         : "border-white/5 bg-white/5"
                     }`}
                   >
                     <img
-                      src={item.image.img}
+                      src={item.image}
                       alt={item.service}
                       className="w-full h-full object-cover"
                       loading="lazy"
                       draggable={false}
                     />
                   </div>
-                  {/* Service name below card */}
                   <div
                     className={`text-center text-base sm:text-lg transition-colors select-none min-h-[3rem] flex items-center justify-center ${
-                      isCenter ? "text-white font-semibold" : "text-neutral-400"
+                      isActive
+                        ? "text-white font-semibold"
+                        : isSide
+                        ? "text-neutral-300"
+                        : "text-neutral-500 sm:text-neutral-400"
                     }`}
                   >
                     {item.service}
@@ -606,8 +849,9 @@ function ServicesCarousel({
         onClick={goToNext}
         className="absolute right-0 top-[40%] -translate-y-1/2 z-10 -mr-4 sm:-mr-6 group"
         aria-label="Next service"
+        disabled={!canNavigate}
       >
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/20 group-hover:border-rose-500 bg-black/40 backdrop-blur flex items-center justify-center transition-all duration-300">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/20 group-hover:border-rose-500 bg-black/40 backdrop-blur flex items-center justify-center transition-all duration-300 disabled:opacity-30">
           <svg
             className="w-5 h-5 sm:w-6 sm:h-6 text-white/60 group-hover:text-rose-500 transition-colors"
             fill="none"
@@ -629,13 +873,15 @@ function ServicesCarousel({
         {services.map((_, idx) => (
           <button
             key={idx}
-            onClick={() => setCurrentIndex(idx)}
+            onClick={() => goToIndex(idx)}
             className={`transition-all duration-300 rounded-full ${
-              idx === currentIndex
+              idx === realActiveIndex
                 ? "w-8 h-2 bg-rose-500"
                 : "w-2 h-2 bg-white/20 hover:bg-white/40"
             }`}
             aria-label={`Go to service ${idx + 1}`}
+            aria-current={idx === realActiveIndex ? "true" : undefined}
+            disabled={!canNavigate}
           />
         ))}
       </div>
@@ -654,6 +900,18 @@ export default function BerberCarsLanding() {
       ? "[font-family:'Oswald',ui-sans-serif]"
       : "[font-family:'Bebas_Neue','Anton',ui-sans-serif]";
   }, [lang]);
+
+  const isLatinLang = lang === "pl" || lang === "en";
+  const servicesHeadingTracking = isLatinLang
+    ? "tracking-[2px]"
+    : "tracking-[1px]";
+  const teamHeadingTracking = isLatinLang ? "tracking-[2px]" : "tracking-[1px]";
+  const contactHeadingTracking = isLatinLang
+    ? "tracking-[2px]"
+    : "tracking-tight";
+  const hoursHeadingTracking = isLatinLang
+    ? "tracking-[2px]"
+    : "tracking-tight";
 
   // Persist language and keep <html lang> in sync for a11y
   useEffect(() => {
@@ -699,7 +957,7 @@ export default function BerberCarsLanding() {
   > = {
     pl: {
       manager:
-        "Ekspert w obsłudze klienta i organizacji pracy serwisu. Doskonale zna się na technice samochodowej i dba o to, aby każde zlecenie było wykonane terminowo i zgodnie z najwyższymi standardami jakości.",
+        "Ekspert w obsłudze Klienta i organizacji pracy serwisu. Doskonale zna się na technice samochodowej i dba o to, aby każde zlecenie było wykonane terminowo i zgodnie z najwyższymi standardami jakości.",
       owner1:
         "Właściciel odpowiedzialny za stronę prawną i administracyjną firmy. Zapewnia pełną legalność i przejrzystość wszystkich procesów biznesowych, dbając o zgodność z przepisami i bezpieczeństwo dokumentacji.",
       owner2:
@@ -707,7 +965,7 @@ export default function BerberCarsLanding() {
     },
     ua: {
       manager:
-        "Експерт у роботі з клієнтами та організації роботи сервісу. Чудово розуміється на автотехніці й дбає про те, щоб кожне замовлення виконувалось вчасно та відповідно до найвищих стандартів якості.",
+        "Експерт у роботі з Клієнтами та організації роботи сервісу. Чудово розуміється на автотехніці й дбає про те, щоб кожне замовлення виконувалось вчасно та відповідно до найвищих стандартів якості.",
       owner1:
         "Власник, відповідальний за юридичну та адміністративну сторону компанії. Забезпечує повну легальність і прозорість усіх бізнес-процесів, дбаючи про відповідність законодавству та безпеку документації.",
       owner2:
@@ -715,7 +973,7 @@ export default function BerberCarsLanding() {
     },
     ru: {
       manager:
-        "Эксперт в работе с клиентами и организации работы сервиса. Отлично разбирается в автотехнике и следит за тем, чтобы каждый заказ выполнялся вовремя и в соответствии с высочайшими стандартами качества.",
+        "Эксперт в работе с Клиентами и организации работы сервиса. Отлично разбирается в автотехнике и следит за тем, чтобы каждый заказ выполнялся вовремя и в соответствии с высочайшими стандартами качества.",
       owner1:
         "Владелец, ответственный за юридическую и административную сторону компании. Обеспечивает полную легальность и прозрачность всех бизнес-процессов, заботясь о соблюдении законодательства и безопасности документации.",
       owner2:
@@ -723,7 +981,7 @@ export default function BerberCarsLanding() {
     },
     en: {
       manager:
-        "Expert in customer service and workshop operations management. Has deep knowledge of automotive technology and ensures every job is completed on time and to the highest quality standards.",
+        "Expert in Customer service and workshop operations management. Has deep knowledge of automotive technology and ensures every job is completed on time and to the highest quality standards.",
       owner1:
         "Owner responsible for legal and administrative aspects of the business. Ensures full compliance and transparency of all business processes, maintaining proper documentation and legal safety.",
       owner2:
@@ -955,7 +1213,7 @@ export default function BerberCarsLanding() {
         <div className="relative mx-auto max-w-7xl px-4">
           <div className="flex items-end justify-between">
             <h2
-              className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
+              className={`text-3xl sm:text-4xl font-extrabold uppercase ${servicesHeadingTracking} ${headingFont}`}
             >
               {t.servicesWarsztat}
             </h2>
@@ -984,7 +1242,7 @@ export default function BerberCarsLanding() {
         <div className="relative mx-auto max-w-7xl px-4">
           <div className="flex items-end justify-between">
             <h2
-              className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
+              className={`text-3xl sm:text-4xl font-extrabold uppercase ${servicesHeadingTracking} ${headingFont}`}
             >
               {t.servicesLakiernia}
             </h2>
@@ -998,7 +1256,7 @@ export default function BerberCarsLanding() {
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="rounded-2xl border border-white/5 bg-white/5 p-6">
             <h3
-              className={`text-2xl font-extrabold uppercase tracking-tight ${headingFont}`}
+              className={`text-2xl font-extrabold uppercase ${contactHeadingTracking} ${headingFont}`}
             >
               {t.contact}
             </h3>
@@ -1041,7 +1299,7 @@ export default function BerberCarsLanding() {
 
             <div className="mt-6">
               <h4
-                className={`text-xl font-bold uppercase tracking-tight ${headingFont}`}
+                className={`text-xl font-bold uppercase ${hoursHeadingTracking} ${headingFont}`}
               >
                 {t.hours}
               </h4>
@@ -1118,7 +1376,7 @@ export default function BerberCarsLanding() {
       {/* TEAM */}
       <section id="team" className="mx-auto max-w-7xl px-4 py-16 sm:py-20">
         <h2
-          className={`text-3xl sm:text-4xl font-extrabold uppercase tracking-[1px] ${headingFont}`}
+          className={`text-3xl sm:text-4xl font-extrabold uppercase ${teamHeadingTracking} ${headingFont}`}
         >
           {t.teamTitle}
         </h2>
@@ -1135,7 +1393,7 @@ export default function BerberCarsLanding() {
               key: "owner1",
               role: t.roleOwner,
               name: t.nameOwner,
-              img: "/team/owner_1.jpg",
+              img: "/team/owner_1.JPG",
             },
             {
               key: "owner2",
