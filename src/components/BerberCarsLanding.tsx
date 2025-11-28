@@ -892,6 +892,9 @@ function ServicesCarousel({
 export default function BerberCarsLanding() {
   const [lang, setLang] = useState<LangKey>("pl");
   const [mounted, setMounted] = useState(false);
+  const [mobileHeroView, setMobileHeroView] = useState<
+    "warsztat" | "lakiernia"
+  >("warsztat");
   const t = useMemo(() => i18n[lang], [lang]);
 
   // Dynamic font class for headings: Oswald for RU/UA (Cyrillic), Bebas Neue for PL/EN
@@ -1001,41 +1004,123 @@ export default function BerberCarsLanding() {
       <Header lang={lang} setLang={setLang} headingFont={headingFont} />
       {/* HERO */}
       <section className="relative overflow-visible">
-        {/* Mobile version: Warsztat logo with sparks */}
+        {/* Mobile version: Toggle between Warsztat and Lakiernia */}
         <div className="block lg:hidden relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(40,40,45,0.6),rgba(10,10,12,0.9))]" />
+          {/* Warsztat view */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-500 ${
+              mobileHeroView === "warsztat"
+                ? "opacity-100 z-10"
+                : "opacity-0 z-0 pointer-events-none"
+            }`}
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(40,40,45,0.6),rgba(10,10,12,0.9))]" />
 
-          {/* Smoke video */}
-          <video
-            className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-screen"
-            src="/media/smoke.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            aria-hidden="true"
-          />
-
-          {/* Sparks video overlay */}
-          <video
-            className="absolute inset-0 w-full h-full object-cover mix-blend-screen"
-            src="/media/sparks.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            aria-hidden="true"
-          />
-
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
-
-          <div className="relative mx-auto max-w-7xl min-h-[70vh] px-4 py-20 sm:py-28 flex items-center justify-center">
-            <img
-              src="/brand/Berber Warsztat LOGO Biale 1500x1500.png"
-              alt="BERBER WARSZTAT"
-              className="pointer-events-none select-none w-[80vw] sm:w-[60vw] max-w-[600px] min-w-[320px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
-              draggable={false}
+            {/* Smoke video */}
+            <video
+              className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-screen"
+              src="/media/smoke.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
             />
+
+            {/* Sparks video overlay */}
+            <video
+              className="absolute inset-0 w-full h-full object-cover mix-blend-screen"
+              src="/media/sparks.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
+            />
+
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
+
+            <div className="relative mx-auto max-w-7xl min-h-[70vh] px-4 py-20 sm:py-28 flex items-center justify-center">
+              <img
+                src="/brand/Berber Warsztat LOGO Biale 1500x1500.png"
+                alt="BERBER WARSZTAT"
+                className="pointer-events-none select-none w-[80vw] sm:w-[60vw] max-w-[600px] min-w-[320px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* Lakiernia view */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-500 ${
+              mobileHeroView === "lakiernia"
+                ? "opacity-100 z-10"
+                : "opacity-0 z-0 pointer-events-none"
+            }`}
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(30,20,40,0.7),rgba(10,10,12,0.9))]" />
+
+            {/* Ink in water video */}
+            <video
+              className="absolute inset-0 w-full h-full object-cover"
+              src="/media/ink_in_water.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
+            />
+
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
+
+            <div className="relative mx-auto max-w-7xl min-h-[70vh] px-4 py-20 sm:py-28 flex items-center justify-center">
+              <img
+                src="/brand/Berber Lakiernia LOGO Biale 1500x1500.png"
+                alt="BERBER LAKIERNIA"
+                className="pointer-events-none select-none w-[80vw] sm:w-[60vw] max-w-[600px] min-w-[320px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* Spacer to maintain height */}
+          <div className="relative min-h-[70vh] py-20 sm:py-28" />
+
+          {/* Toggle button at bottom center */}
+          <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center">
+            <button
+              onClick={() =>
+                setMobileHeroView((prev) =>
+                  prev === "warsztat" ? "lakiernia" : "warsztat"
+                )
+              }
+              className="group flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 active:bg-white/20 transition-all duration-300 shadow-lg"
+              aria-label="Toggle hero view"
+            >
+              <span
+                className={`text-xs font-semibold uppercase tracking-wider transition-colors duration-300 ${
+                  mobileHeroView === "warsztat" ? "text-white" : "text-white/50"
+                }`}
+              >
+                Warsztat
+              </span>
+              <div className="relative w-10 h-5 rounded-full bg-white/20">
+                <div
+                  className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${
+                    mobileHeroView === "warsztat" ? "left-0.5" : "left-5"
+                  }`}
+                />
+              </div>
+              <span
+                className={`text-xs font-semibold uppercase tracking-wider transition-colors duration-300 ${
+                  mobileHeroView === "lakiernia"
+                    ? "text-white"
+                    : "text-white/50"
+                }`}
+              >
+                Lakiernia
+              </span>
+            </button>
           </div>
         </div>
 
@@ -1393,7 +1478,7 @@ export default function BerberCarsLanding() {
               key: "owner1",
               role: t.roleOwner,
               name: t.nameOwner,
-              img: "/team/owner_1.jpg",
+              img: "/team/owner_1.jpg ",
             },
             {
               key: "owner2",
