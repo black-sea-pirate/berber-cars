@@ -803,7 +803,7 @@ function ServicesCarousel({
                 className="flex-shrink-0 px-2 sm:px-4 landscape:px-1 landscape:lg:px-4"
               >
                 <div
-                  className={`w-[330px] sm:w-[440px] landscape:w-[280px] landscape:sm:w-[320px] landscape:lg:w-[440px] space-y-4 transform-gpu transition-all duration-500 ${
+                  className={`w-[330px] sm:w-[440px] landscape:w-[250px] landscape:sm:w-[290px] landscape:lg:w-[440px] space-y-4 transform-gpu transition-all duration-500 ${
                     isActive
                       ? "scale-100 opacity-100"
                       : isSide
