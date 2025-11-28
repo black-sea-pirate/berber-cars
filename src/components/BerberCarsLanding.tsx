@@ -773,7 +773,7 @@ function ServicesCarousel({
       <div ref={containerRef} className="overflow-hidden px-4">
         <div
           ref={trackRef}
-          className={`flex items-center gap-4 sm:gap-8 ${
+          className={`flex items-center gap-4 sm:gap-8 landscape:gap-2 landscape:lg:gap-8 ${
             withTransition ? "transition-transform duration-500 ease-out" : ""
           }`}
           style={{ transform: `translate3d(${translateX - 15}px, 0, 0)` }}
@@ -789,9 +789,9 @@ function ServicesCarousel({
             const isSide = position === "prev" || position === "next";
             const sideTranslate =
               position === "prev"
-                ? "sm:translate-x-6 lg:translate-x-17"
+                ? "sm:translate-x-6 lg:translate-x-17 landscape:translate-x-10 landscape:lg:translate-x-17"
                 : position === "next"
-                ? "sm:-translate-x-6 lg:-translate-x-17"
+                ? "sm:-translate-x-6 lg:-translate-x-17 landscape:-translate-x-10 landscape:lg:-translate-x-17"
                 : "";
 
             return (
@@ -800,14 +800,14 @@ function ServicesCarousel({
                 ref={(el) => {
                   slideRefs.current[idx] = el;
                 }}
-                className="flex-shrink-0 px-2 sm:px-4"
+                className="flex-shrink-0 px-2 sm:px-4 landscape:px-1 landscape:lg:px-4"
               >
                 <div
-                  className={`w-[330px] sm:w-[440px] space-y-4 transform-gpu transition-all duration-500 ${
+                  className={`w-[330px] sm:w-[440px] landscape:w-[280px] landscape:sm:w-[320px] landscape:lg:w-[440px] space-y-4 transform-gpu transition-all duration-500 ${
                     isActive
                       ? "scale-100 opacity-100"
                       : isSide
-                      ? `opacity-0 sm:opacity-100 scale-[0.78] ${sideTranslate}`
+                      ? `opacity-0 sm:opacity-100 landscape:opacity-100 scale-[0.78] ${sideTranslate}`
                       : "opacity-0 scale-[0.85] pointer-events-none"
                   }`}
                 >
@@ -1004,8 +1004,8 @@ export default function BerberCarsLanding() {
       <Header lang={lang} setLang={setLang} headingFont={headingFont} />
       {/* HERO */}
       <section className="relative overflow-visible">
-        {/* Mobile version: Toggle between Warsztat and Lakiernia */}
-        <div className="block lg:hidden relative overflow-hidden">
+        {/* Mobile version (portrait only): Toggle between Warsztat and Lakiernia */}
+        <div className="block lg:hidden landscape:hidden relative overflow-hidden">
           {/* Warsztat view */}
           <div
             className={`absolute inset-0 transition-opacity duration-500 ${
@@ -1124,8 +1124,8 @@ export default function BerberCarsLanding() {
           </div>
         </div>
 
-        {/* Desktop version: split hero with two videos */}
-        <div className="hidden lg:flex min-h-[70vh] relative">
+        {/* Desktop version + landscape mobile: split hero with two videos */}
+        <div className="hidden landscape:flex lg:flex min-h-[70vh] landscape:min-h-[60vh] relative">
           {/* Left side - BERBER WARSZTAT with smoke video */}
           <div className="relative w-1/2 overflow-hidden">
             {/* Background gradient */}
@@ -1164,7 +1164,7 @@ export default function BerberCarsLanding() {
               <img
                 src="/brand/Berber Warsztat LOGO Biale 1500x1500.png"
                 alt="BERBER WARSZTAT"
-                className="pointer-events-none select-none w-[45vw] max-w-[500px] min-w-[280px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
+                className="pointer-events-none select-none w-[45vw] landscape:w-[35vw] landscape:lg:w-[45vw] max-w-[500px] min-w-[200px] landscape:min-w-[180px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
                 draggable={false}
               />
             </div>
@@ -1206,7 +1206,7 @@ export default function BerberCarsLanding() {
               <img
                 src="/brand/Berber Lakiernia LOGO Biale 1500x1500.png"
                 alt="BERBER LAKIERNIA"
-                className="pointer-events-none select-none w-[45vw] max-w-[500px] min-w-[280px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
+                className="pointer-events-none select-none w-[45vw] landscape:w-[35vw] landscape:lg:w-[45vw] max-w-[500px] min-w-[200px] landscape:min-w-[180px] opacity-95 drop-shadow-[0_0_30px_rgba(255,255,255,.12)]"
                 draggable={false}
               />
             </div>
