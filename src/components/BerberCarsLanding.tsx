@@ -897,6 +897,14 @@ export default function BerberCarsLanding() {
   >("warsztat");
   const t = useMemo(() => i18n[lang], [lang]);
 
+  // Video refs for programmatic autoplay (fixes iOS/mobile issues)
+  const smokeVideoRef = useRef<HTMLVideoElement>(null);
+  const sparksVideoRef = useRef<HTMLVideoElement>(null);
+  const inkVideoRef = useRef<HTMLVideoElement>(null);
+  const desktopSmokeRef = useRef<HTMLVideoElement>(null);
+  const desktopSparksRef = useRef<HTMLVideoElement>(null);
+  const desktopInkRef = useRef<HTMLVideoElement>(null);
+
   // Dynamic font class for headings: Oswald for RU/UA (Cyrillic), Bebas Neue for PL/EN
   const headingFont = useMemo(() => {
     return lang === "ru" || lang === "ua"
@@ -924,6 +932,48 @@ export default function BerberCarsLanding() {
         (localStorage.getItem("bc.lang") as LangKey | null) || null;
       if (stored && i18n[stored]) setLang(stored);
     } catch {}
+  }, []);
+
+  // Programmatically play videos on mount (fixes mobile autoplay issues)
+  useEffect(() => {
+    const allVideoRefs = [
+      smokeVideoRef,
+      sparksVideoRef,
+      inkVideoRef,
+      desktopSmokeRef,
+      desktopSparksRef,
+      desktopInkRef,
+    ];
+
+    const playAllVideos = () => {
+      allVideoRefs.forEach((ref) => {
+        if (ref.current) {
+          ref.current.play().catch(() => {
+            // Autoplay blocked - will retry on user interaction
+          });
+        }
+      });
+    };
+
+    // Try to play on mount
+    const timer = setTimeout(playAllVideos, 100);
+
+    // Also try to play on first user interaction (helps on iOS)
+    const handleInteraction = () => {
+      playAllVideos();
+      // Remove listeners after first interaction
+      document.removeEventListener("touchstart", handleInteraction);
+      document.removeEventListener("click", handleInteraction);
+    };
+
+    document.addEventListener("touchstart", handleInteraction, { once: true });
+    document.addEventListener("click", handleInteraction, { once: true });
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("touchstart", handleInteraction);
+      document.removeEventListener("click", handleInteraction);
+    };
   }, []);
 
   useEffect(() => {
@@ -1133,23 +1183,29 @@ export default function BerberCarsLanding() {
 
             {/* Smoke video */}
             <video
+              ref={desktopSmokeRef}
               className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-screen"
               src="/media/smoke.mp4"
               autoPlay
               muted
               loop
               playsInline
+              preload="auto"
+              disablePictureInPicture
               aria-hidden="true"
             />
 
             {/* Sparks video overlay */}
             <video
+              ref={desktopSparksRef}
               className="absolute inset-0 w-full h-full object-cover mix-blend-screen"
               src="/media/sparks.mp4"
               autoPlay
               muted
               loop
               playsInline
+              preload="auto"
+              disablePictureInPicture
               aria-hidden="true"
             />
 
@@ -1192,12 +1248,15 @@ export default function BerberCarsLanding() {
 
             {/* Ink in water video */}
             <video
+              ref={desktopInkRef}
               className="absolute inset-0 w-full h-full object-cover"
               src="/media/ink_in_water.mp4"
               autoPlay
               muted
               loop
               playsInline
+              preload="auto"
+              disablePictureInPicture
               aria-hidden="true"
             />
 
