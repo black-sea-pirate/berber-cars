@@ -297,6 +297,85 @@ feat: Split hero section with dual videos, add smooth blur transitions and spark
 
 ---
 
+### Phase 10: Mobile Hero Toggle for Warsztat/Lakiernia ⭐ UX ENHANCEMENT
+
+**Date**: November 28, 2025  
+**Objective**: Allow mobile users to switch between Warsztat and Lakiernia hero views
+
+**Problem**: On mobile (portrait), only Warsztat hero was visible. Users couldn't see Lakiernia branding.
+
+**Solution**: Added toggle switch at bottom of mobile hero section
+
+**Implementation**:
+
+1. **New State**: `mobileHeroView: 'warsztat' | 'lakiernia'`
+
+2. **Dual Hero Layers** (mobile portrait only):
+
+   - **Warsztat layer**: Smoke + sparks videos, Warsztat logo
+   - **Lakiernia layer**: Ink in water video, Lakiernia logo
+   - Layers toggle with `opacity` transition (500ms)
+
+3. **Toggle Button UI**:
+
+   ```jsx
+   - Position: absolute bottom-6, centered
+   - Design: pill-shaped with backdrop-blur
+   - Labels: "WARSZTAT" / "LAKIERNIA"
+   - Toggle switch: white circle sliding left/right
+   - Active label: white, inactive: white/50
+   ```
+
+4. **Animation**: Smooth opacity crossfade between views
+
+**Files Modified**: `src/components/BerberCarsLanding.tsx`
+
+---
+
+### Phase 11: Landscape Mobile Optimization ⭐ RESPONSIVE FIX
+
+**Date**: November 28, 2025  
+**Objective**: Fix hero cutoff and carousel card overflow on landscape mobile devices
+
+**Problems Identified** (from user screenshots):
+
+1. Hero showing only partial logo (top portion cut off)
+2. Carousel side cards being clipped at edges
+
+**Solution 1: Landscape Hero**
+
+- Hide mobile toggle view on landscape: `landscape:hidden`
+- Show desktop split hero on landscape: `landscape:flex`
+- Reduced hero height: `landscape:min-h-[60vh]`
+- Smaller logos for landscape: `landscape:w-[35vw]`, `landscape:min-w-[180px]`
+
+**Solution 2: Landscape Carousel**
+
+- Reduced card sizes:
+  - Base: `landscape:w-[250px]` (was 280px)
+  - SM breakpoint: `landscape:sm:w-[290px]` (was 320px)
+  - LG breakpoint: `landscape:lg:w-[440px]` (unchanged)
+- Reduced gap: `landscape:gap-2` (was gap-4/8)
+- Reduced slide padding: `landscape:px-1`
+- Adjusted side card translations: `landscape:translate-x-10` / `landscape:-translate-x-10`
+- Made side cards visible: `landscape:opacity-100`
+
+**Technical Details**:
+
+```css
+/* Hero classes */
+.mobile-hero { display: block lg:hidden landscape:hidden }
+.desktop-hero { display: hidden landscape:flex lg:flex }
+
+/* Carousel card classes */
+.card { w-[330px] sm:w-[440px] landscape:w-[250px] landscape:sm:w-[290px] }
+.track { gap-4 sm:gap-8 landscape:gap-2 landscape:lg:gap-8 }
+```
+
+**Files Modified**: `src/components/BerberCarsLanding.tsx`
+
+---
+
 ## 📁 File Structure
 
 ```
@@ -741,8 +820,9 @@ feat: Split hero section with dual videos, add smooth blur transitions and spark
 ---
 
 **End of Report**  
-**Generated**: November 20, 2025  
+**Generated**: November 29, 2025  
+**Last Updated**: November 29, 2025  
 **Project Version**: 0.1.0  
-**Total Development Sessions**: 1 comprehensive conversation  
-**Lines of Code (Main Component)**: 1325  
+**Total Development Sessions**: Multiple conversations  
+**Lines of Code (Main Component)**: ~1733  
 **Total Assets**: 20+ (videos, images, logos)

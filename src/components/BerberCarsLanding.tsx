@@ -27,7 +27,7 @@ const PHONE_E164 = "+48881288700"; // tel link
 const PHONE_HUMAN = "+48 881 288 700";
 const EMAIL = "biuro@berbercars.pl";
 const ADDRESS_TEXT = "Roździeńska 41, 40-382 Katowice";
-const TELEGRAM_HANDLE = "berbercars";
+const TELEGRAM_HANDLE = "berberwarsztat";
 const INSTAGRAM_URL = "https://www.instagram.com/berbercarserwis/";
 
 const GMAPS_COORDS = "50.260655285313305,19.07732689031581";
